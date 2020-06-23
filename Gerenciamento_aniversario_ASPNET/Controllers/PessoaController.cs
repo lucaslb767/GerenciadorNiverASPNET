@@ -16,58 +16,64 @@ namespace Gerenciamento_aniversario_ASPNET.Controllers
 
         public PessoaController(PessoaRepository pessoaRepository)
         {
-            PessoaRepository = pessoaRepository;
+            this.PessoaRepository = pessoaRepository;
         }
 
-        [Route("Pessoa/")]
         // GET: Pessoa
+        [Route("Pessoas/HappyBirthday")]
+        public ActionResult HappyBirthday()
+        {
+            DateTime dataDeHoje = DateTime.Today;
+            var pessoa = PessoaRepository.GetAll().Where(pessoa => pessoa.DataDeAniversario.Day.Equals(dataDeHoje.Day) && pessoa.DataDeAniversario.Month.Equals(dataDeHoje.Month));
+
+            return View(pessoa);
+        }
+
+        // GET: Pessoa
+        [Route("Pessoa/")]
         public ActionResult Index()
         {
-            var pessoasAniversariantesHoje = PessoaRepository.GetTodayBirthday();
-            ViewBag.PessoaHoje = pessoasAniversariantesHoje;
-            var pessoasProximoAniversario = PessoaRepository.GetNextBirthday();
-            ViewBag.PessoaProximo = pessoasProximoAniversario;
-            return View();
-        }
-
-        [Route("Pessoa/Search")]
-        public ActionResult Search(string nome)
-        {
-            var pessoa = PessoaRepository.GetByName(nome);
+            var pessoa = PessoaRepository.ListaOrdenada();
             return View(pessoa);
         }
 
-        [Route("Pessoa/CompleteList")]
-        public ActionResult CompleteList()
-        {
-            var pessoa = PessoaRepository.GetAll();
-            return View(pessoa);
-        }
-
-        //GET: Pessoa/Details/5
-        [Route("Pessoa/Details/{id}")]
+        // GET: Pessoa/Details/5
+        [Route("Pessoas/Details/{id}")]
         public ActionResult Details(int id)
         {
-            var pessoa = PessoaRepository.GetById(id);
+            var pessoa = this.PessoaRepository.GetById(id);
             return View(pessoa);
         }
 
-        [Route("Pessoa/Create")]
+        //GET: Pessoa/Buscar
+        [Route("Pessoas/Search")]
+        public ActionResult Search(string nome)
+        {
+            var pessoa = PessoaRepository.BuscarPorNome(nome);
+            return View(pessoa);
+        }
+
         // GET: Pessoa/Create
+        [Route("Pessoas/Create")]
         public ActionResult Create()
         {
             return View();
         }
 
-        [Route("Pessoa/Create")]
         // POST: Pessoa/Create
+        [Route("Pessoas/Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Pessoa pessoa)
         {
             try
             {
+                if (ModelState.IsValid == false)
+                    return View();
+
+                pessoa.DiasRestantes = pessoa.ProximoAniversario();
                 PessoaRepository.Save(pessoa);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -76,28 +82,32 @@ namespace Gerenciamento_aniversario_ASPNET.Controllers
             }
         }
 
-        [Route("Pessoa/Edit/{id}")]
         // GET: Pessoa/Edit/5
+        [Route("Pessoas/Edit/{id}")]
         public ActionResult Edit(int id)
         {
-            var pessoa = PessoaRepository.GetById(id);
+            var pessoa = this.PessoaRepository.GetById(id);
+
             return View(pessoa);
         }
 
         // POST: Pessoa/Edit/5
-        [Route("Pessoa/Edit/{id}")]
+        [Route("Pessoas/Edit/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Pessoa pessoa)
         {
             try
             {
-                var pessoaEditada = PessoaRepository.GetById(id);
-                pessoaEditada.NomePessoa = pessoa.NomePessoa;
-                pessoaEditada.SobrenomePessoa = pessoa.SobrenomePessoa;
-                pessoaEditada.DataDeAniversario = pessoa.DataDeAniversario;
+                if (ModelState.IsValid == false)
+                    return View();
 
-                PessoaRepository.Update(pessoaEditada);
+                var pessoaEdit = PessoaRepository.GetById(id);
+
+                pessoaEdit.Nome = pessoa.Nome;
+                pessoaEdit.DataDeAniversario = pessoa.DataDeAniversario;
+
+                PessoaRepository.Update(pessoaEdit);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -106,23 +116,26 @@ namespace Gerenciamento_aniversario_ASPNET.Controllers
             }
         }
 
-        [Route("Pessoa/Delete/{id}")]
         // GET: Pessoa/Delete/5
+        [Route("Pessoas/Delete/{id}")]
         public ActionResult Delete(int id)
         {
-            var pessoa = PessoaRepository.GetById(id);
+            var pessoa = this.PessoaRepository.GetById(id);
             return View(pessoa);
         }
 
         // POST: Pessoa/Delete/5
+        [Route("Pessoas/Delete/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("Pessoa/Delete/{id}")]
-        public ActionResult Delete(int id, Pessoa pessoa)
+        public ActionResult Delete(Pessoa pessoa)
         {
             try
             {
-                PessoaRepository.Delete(id);
+                if (ModelState.IsValid == false)
+                    return View();
+
+                PessoaRepository.Delete(pessoa);
 
                 return RedirectToAction(nameof(Index));
             }

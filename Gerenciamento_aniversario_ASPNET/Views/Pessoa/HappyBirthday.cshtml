@@ -1,12 +1,13 @@
 ﻿@model IEnumerable<Gerenciamento_aniversario_ASPNET.Models.Pessoa>
 
 @{
-    ViewData["Title"] = "Search";
+    ViewData["Title"] = "HappyBirthday";
 }
 
-<h1>BuscarPeloNome</h1>
+<h1>Happy Birthday!</h1>
 
 <p>
+    <a asp-action="Create">Create New</a> |
     <a asp-action="Index">Voltar para página principal</a>
 </p>
 <table class="table">
@@ -40,6 +41,9 @@
                     @Html.DisplayFor(modelItem => item.DataDeAniversario)
                 </td>
                 <td>
+                    @Html.DisplayFor(modelItem => item.DiasRestantes)
+                </td>
+                <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
                     @Html.ActionLink("Details", "Details", new { id = item.Id }) |
                     @Html.ActionLink("Delete", "Delete", new { id = item.Id })
@@ -48,3 +52,4 @@
         }
     </tbody>
 </table>
+

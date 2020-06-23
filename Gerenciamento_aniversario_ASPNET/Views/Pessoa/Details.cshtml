@@ -1,14 +1,14 @@
 ﻿@model Gerenciamento_aniversario_ASPNET.Models.Pessoa
 
 @{
-        ViewData["Title"] = "Details";
-        string data = Model.DataDeAniversario.ToString("dd/MM/yyyy");
+    ViewData["Title"] = "Details";
+
 }
 
-<h1>Detail</h1>
+<h1>MostrarPessoa</h1>
 
 <div>
-    <h4>Pessoa</h4>
+    <h4>PessoaModel</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -18,22 +18,22 @@
             @Html.DisplayFor(model => model.Id)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.NomePessoa)
+            @Html.DisplayNameFor(model => model.Nome)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.NomePessoa)
+            @Html.DisplayFor(model => model.Nome)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.SobrenomePessoa)
+            @Html.DisplayNameFor(model => model.DataDeAniversario)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.SobrenomePessoa)
+            @Html.DisplayFor(model => model.DataDeAniversario)
         </dd>
         <dt class="col-sm-2">
-            Data de Aniversário
+            @Html.DisplayNameFor(model => model.DiasRestantes)
         </dt>
         <dd class="col-sm-10">
-            @data
+            @Html.DisplayFor(model => model.DiasRestantes)
         </dd>
     </dl>
 </div>
@@ -41,3 +41,4 @@
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     <a asp-action="Index">Back to List</a>
 </div>
+

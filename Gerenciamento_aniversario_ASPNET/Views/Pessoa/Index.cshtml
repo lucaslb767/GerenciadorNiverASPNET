@@ -2,106 +2,59 @@
 
 @{
     ViewData["Title"] = "Index";
-    var listaAniversarianteHoje = ViewBag.PessoaHoje;
-    var listaAniversarianteProximos = ViewBag.PessoaProximo;
 }
 
-<h1>Index</h1>
+<h1>Pessoas</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Create New</a> |
+    <a asp-action="HappyBirthday">People you should buy stuff...now...quickly</a>
 </p>
-<p>
-    <a asp-action="CompleteList">Complete List of All People</a>
-</p>
-<form asp-action="Search" method="get">
+<form asp-action="Search">
     <div class="form-group">
-        <input type="text" name="Nome" placeholder="Buscar pelo nome" class="form-control" style="width:30%;" required />
-        <input type="submit" value="Search" class="btn btn-primary" style="margin-top: 1%;" />
+        <input type="text" name="nome" placeholder="Insira o nome desejado..." class="form-control" required />
+        <input type="submit" value="Search" class="btn btn-outline-primary" />
     </div>
 </form>
-<h2>Aniversariantes do Dia</h2>
 <table class="table">
     <thead>
         <tr>
             <th>
-                Nome
+                @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
-                Sobrenome
+                @Html.DisplayNameFor(model => model.Nome)
             </th>
             <th>
-                Data De Aniversário
+                Data de Aniversário
+            </th>
+            <th>
+                Dias p/ Próximo Aniversário
             </th>
         </tr>
     </thead>
     <tbody>
-        @if (listaAniversarianteHoje != null)
+        @foreach (var item in Model)
         {
-
-            @foreach (var item in listaAniversarianteHoje)
-            {
-                string data = item.DataDeAniversario.ToString("dd/MM/yyyy");
-                string nome = item.NomePessoa;
-                string sobrenome = item.SobrenomePessoa;
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => nome)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => sobrenome)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => data)
-                    </td>
-                </tr>
-            }
-        }
-    </tbody>
-</table>
-
-<br />
-<br />
-
-<h2>Próximos Aniversários</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Nome
-            </th>
-            <th>
-                Sobrenome
-            </th>
-            <th>
-                Data De Aniversário
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (listaAniversarianteProximos != null)
-        {
-
-            @foreach (var item in listaAniversarianteProximos)
-            {
-                string data = item.DataDeAniversario.ToString("dd/MM/yyyy");
-                string nome = item.NomePessoa;
-                string sobrenome = item.SobrenomePessoa;
-                if ((data.Substring(0, 2) != DateTime.Today.ToString("dd/MM/yyyy").Substring(0, 2)) && ((data.Substring(3, 2) != DateTime.Today.ToString("dd/MM/yyyy").Substring(3, 2)) || (data.Substring(3, 2) == DateTime.Today.ToString("dd/MM/yyyy").Substring(3, 2))))
-                {
-                    <tr>
-                        <td>
-                            @nome
-                        </td>
-                        <td>
-                            @sobrenome
-                        </td>
-                        <td>
-                            @data
-                        </td>
-                    </tr>
-                }
-            }
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataDeAniversario)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DiasRestantes)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
         }
     </tbody>
 </table>

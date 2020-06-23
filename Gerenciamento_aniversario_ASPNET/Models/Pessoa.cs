@@ -10,25 +10,21 @@ namespace Gerenciamento_aniversario_ASPNET.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        public string NomePessoa { get; set; }
-        [Required]
-        public string SobrenomePessoa { get; set; }
-        [Required]
+        public string Nome { get; set; }
         public DateTime DataDeAniversario { get; set; }
-
-        public int DiferencaAniversario()
+        public int DiasRestantes { get; set; }
+        public int ProximoAniversario()
         {
-            DateTime dataDeHoje = DateTime.Today;
-            DateTime proximaData = new DateTime(dataDeHoje.Year, DataDeAniversario.Month, DataDeAniversario.Day);
-            if (proximaData < dataDeHoje)
+            DateTime momento = DateTime.Today;
+            DateTime dataAniversario = new DateTime(momento.Year, DataDeAniversario.Month, DataDeAniversario.Day);
+
+            if (dataAniversario < momento)
             {
-                proximaData = proximaData.AddYears(1);
+                dataAniversario = dataAniversario.AddYears(1);
             }
 
-            int diferencaDeDias = (proximaData - dataDeHoje).Days;
-
-            return diferencaDeDias;
+            int diferancaData = (dataAniversario - momento).Days;
+            return diferancaData;
         }
     }
 }
