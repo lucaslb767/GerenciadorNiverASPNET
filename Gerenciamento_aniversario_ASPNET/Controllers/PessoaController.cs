@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Gerenciamento_aniversario_ASPNET.Models;
 using Gerenciamento_aniversario_ASPNET.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,12 +40,12 @@ namespace Gerenciamento_aniversario_ASPNET.Controllers
         // POST: Pessoa/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Pessoa pessoa)
         {
             try
             {
                 // TODO: Add insert logic here
-
+                this.PessoaRepository.Save(pessoa);
                 return RedirectToAction(nameof(Index));
             }
             catch
