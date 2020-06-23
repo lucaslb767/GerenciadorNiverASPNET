@@ -22,8 +22,8 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
         {
             using (var connection = new SqlConnection(this.ConnectionString))
             {
-                var sql = @" INSERT INTO Pessoa(Nome, DATANASCIMENTO)
-                             VALUES (@P1, @P2)
+                var sql = @" INSERT INTO Pessoa(Nome, DATANASCIMENTO, SOBRENOME)
+                             VALUES (@P1, @P2, @P3)
                 ";
 
                 if (connection.State != System.Data.ConnectionState.Open)
@@ -33,6 +33,8 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
                 sqlCommand.CommandText = sql;
                 sqlCommand.Parameters.AddWithValue("P1", pessoa.Nome);
                 sqlCommand.Parameters.AddWithValue("P2", pessoa.DataDeAniversario);
+                sqlCommand.Parameters.AddWithValue("P3", pessoa.SobreNome);
+
 
                 sqlCommand.ExecuteNonQuery();
 
@@ -46,7 +48,8 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
             {
                 var sql = @" UPDATE PESSOA
                              SET Nome = @P1,
-                             DATANASCIMENTO = @P2
+                             DATANASCIMENTO = @P2,
+                             SOBRENOME = @P4
                              WHERE Id = @P3
                 ";
 
@@ -58,6 +61,7 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
                 sqlCommand.Parameters.AddWithValue("P1", pessoa.Nome);
                 sqlCommand.Parameters.AddWithValue("P2", pessoa.DataDeAniversario);
                 sqlCommand.Parameters.AddWithValue("P3", pessoa.Id);
+                sqlCommand.Parameters.AddWithValue("P4", pessoa.SobreNome);
 
                 sqlCommand.ExecuteNonQuery();
 
@@ -93,7 +97,7 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
             using (var connection = new SqlConnection(this.ConnectionString))
             {
 
-                var sql = @" SELECT Id, Nome, DATANASCIMENTO FROM Pessoa";
+                var sql = @" SELECT ID, NOME, SOBRENOME, DATANASCIMENTO FROM Pessoa";
 
                 if (connection.State != System.Data.ConnectionState.Open)
                     connection.Open();
@@ -109,6 +113,7 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
                     {
                         Id = int.Parse(reader["Id"].ToString()),
                         Nome = reader["Nome"].ToString(),
+                        SobreNome = reader["SobreNome"].ToString(),
                         DataDeAniversario = Convert.ToDateTime(reader["DATANASCIMENTO"]),
                     };
                     pessoa.DiasRestantes = pessoa.ProximoAniversario();
@@ -136,9 +141,9 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
             using (var connection = new SqlConnection(this.ConnectionString))
             {
 
-                var sql = @" SELECT Id, Nome, DATANASCIMENTO 
+                var sql = @" SELECT Id, NOME, SOBRENOME, DATANASCIMENTO 
                              FROM Pessoa
-                             WHERE Nome LIKE '%' + @P1 + '%'
+                             WHERE (NOME LIKE '%' + @P1 + '%' OR SOBRENOME LIKE '%' + @P1 + '%')
                 ";
 
                 if (connection.State != System.Data.ConnectionState.Open)
@@ -147,6 +152,7 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
                 SqlCommand sqlCommand = connection.CreateCommand();
                 sqlCommand.CommandText = sql;
                 sqlCommand.Parameters.AddWithValue("P1", nomePessoa);
+                
 
                 SqlDataReader reader = sqlCommand.ExecuteReader();
 
@@ -156,6 +162,7 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
                     {
                         Id = int.Parse(reader["Id"].ToString()),
                         Nome = reader["Nome"].ToString(),
+                        SobreNome = reader["SobreNome"].ToString(),
                         DataDeAniversario = Convert.ToDateTime(reader["DATANASCIMENTO"]),
                     };
                     result.Add(pessoa);
@@ -172,7 +179,7 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
             using (var connection = new SqlConnection(this.ConnectionString))
             {
 
-                var sql = @" SELECT Id, Nome, DATANASCIMENTO
+                var sql = @" SELECT Id, NOME,SOBRENOME, DATANASCIMENTO
                              FROM Pessoa
                              WHERE Id = @P1
                 ";
@@ -192,6 +199,7 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
                     {
                         Id = int.Parse(reader["Id"].ToString()),
                         Nome = reader["Nome"].ToString(),
+                        SobreNome = reader["SobreNome"].ToString(),
                         DataDeAniversario = DateTime.Parse(reader["DATANASCIMENTO"].ToString()),
                     };
 

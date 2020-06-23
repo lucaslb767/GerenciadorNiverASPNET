@@ -11,6 +11,7 @@ namespace Gerenciamento_aniversario_ASPNET.Models
         [Key]
         public int Id { get; set; }
         public string Nome { get; set; }
+        public string SobreNome { get; set; }
         public DateTime DataDeAniversario { get; set; }
         public int DiasRestantes { get; set; }
         public int ProximoAniversario()

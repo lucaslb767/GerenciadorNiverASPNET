@@ -4,7 +4,7 @@
     ViewData["Title"] = "Search";
 }
 
-<h1>BuscarPeloNome</h1>
+<h1>Search</h1>
 
 <p>
     <a asp-action="Index">Voltar para página principal</a>
@@ -19,32 +19,36 @@
                 @Html.DisplayNameFor(model => model.Nome)
             </th>
             <th>
-                Data de Aniversário
+                @Html.DisplayNameFor(model => model.SobreNome)
             </th>
             <th>
-                Dias p/ Próximo Aniversário
+                Data de Aniversário
             </th>
+            
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nome)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DataDeAniversario)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SobreNome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataDeAniversario)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
         }
     </tbody>
 </table>

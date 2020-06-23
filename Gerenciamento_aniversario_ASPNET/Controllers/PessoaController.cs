@@ -20,7 +20,7 @@ namespace Gerenciamento_aniversario_ASPNET.Controllers
         }
 
         // GET: Pessoa
-        [Route("Pessoas/HappyBirthday")]
+        [Route("Pessoa/HappyBirthday")]
         public ActionResult HappyBirthday()
         {
             DateTime dataDeHoje = DateTime.Today;
@@ -105,6 +105,7 @@ namespace Gerenciamento_aniversario_ASPNET.Controllers
                 var pessoaEdit = PessoaRepository.GetById(id);
 
                 pessoaEdit.Nome = pessoa.Nome;
+                pessoaEdit.SobreNome = pessoa.SobreNome;
                 pessoaEdit.DataDeAniversario = pessoa.DataDeAniversario;
 
                 PessoaRepository.Update(pessoaEdit);
