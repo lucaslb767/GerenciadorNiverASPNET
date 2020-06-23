@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Gerenciamento_aniversario_ASPNET.Models;
 using Gerenciamento_aniversario_ASPNET.Repository;
 
@@ -16,46 +16,58 @@ namespace Gerenciamento_aniversario_ASPNET.Controllers
 
         public PessoaController(PessoaRepository pessoaRepository)
         {
-            this.PessoaRepository = pessoaRepository;
+            PessoaRepository = pessoaRepository;
         }
 
-        // GET: PessoaController
+        [Route("Pessoa/")]
+        // GET: Pessoa
         public ActionResult Index()
         {
-            var model = this.PessoaRepository.GetAll();
-
-            return View(model);
+            var pessoasAniversariantesHoje = PessoaRepository.GetTodayBirthday();
+            ViewBag.PessoaHoje = pessoasAniversariantesHoje;
+            var pessoasProximoAniversario = PessoaRepository.GetNextBirthday();
+            ViewBag.PessoaProximo = pessoasProximoAniversario;
+            return View();
         }
 
-        // GET: PessoaController/Details/5
+        [Route("Pessoa/Search")]
+        public ActionResult Search(string nome)
+        {
+            var pessoa = PessoaRepository.GetByName(nome);
+            return View(pessoa);
+        }
+
+        [Route("Pessoa/CompleteList")]
+        public ActionResult CompleteList()
+        {
+            var pessoa = PessoaRepository.GetAll();
+            return View(pessoa);
+        }
+
+        //GET: Pessoa/Details/5
+        [Route("Pessoa/Details/{id}")]
         public ActionResult Details(int id)
         {
-            var model = this.PessoaRepository.GetPessoaById(id);
-            return View(model);
+            var pessoa = PessoaRepository.GetById(id);
+            return View(pessoa);
         }
 
-        // GET: PessoaController/Create
+        [Route("Pessoa/Create")]
+        // GET: Pessoa/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        [HttpGet]
-        public ActionResult Search([FromQuery] string query)
-        {
-            var model = this.PessoaRepository.Search(query);
-
-            return View("Index", model);
-        }
-
-        // POST: PessoaController/Create
+        [Route("Pessoa/Create")]
+        // POST: Pessoa/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Pessoa pessoa)
         {
             try
             {
-                this.PessoaRepository.Save(pessoa);
+                PessoaRepository.Save(pessoa);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -64,23 +76,28 @@ namespace Gerenciamento_aniversario_ASPNET.Controllers
             }
         }
 
-        [HttpGet]
+        [Route("Pessoa/Edit/{id}")]
+        // GET: Pessoa/Edit/5
         public ActionResult Edit(int id)
         {
-            var model = this.PessoaRepository.GetPessoaById(id);
-            return View(model);
+            var pessoa = PessoaRepository.GetById(id);
+            return View(pessoa);
         }
 
-        // POST: PessoaController/Edit/5
+        // POST: Pessoa/Edit/5
+        [Route("Pessoa/Edit/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Pessoa model)
+        public ActionResult Edit(int id, Pessoa pessoa)
         {
             try
             {
-                model.Id = id;
-                this.PessoaRepository.Update(model);
+                var pessoaEditada = PessoaRepository.GetById(id);
+                pessoaEditada.NomePessoa = pessoa.NomePessoa;
+                pessoaEditada.SobrenomePessoa = pessoa.SobrenomePessoa;
+                pessoaEditada.DataDeAniversario = pessoa.DataDeAniversario;
 
+                PessoaRepository.Update(pessoaEditada);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -89,22 +106,23 @@ namespace Gerenciamento_aniversario_ASPNET.Controllers
             }
         }
 
-        // GET: PessoaController/Delete/5
+        [Route("Pessoa/Delete/{id}")]
+        // GET: Pessoa/Delete/5
         public ActionResult Delete(int id)
         {
-            var model = this.PessoaRepository.GetPessoaById(id);
-            return View(model);
+            var pessoa = PessoaRepository.GetById(id);
+            return View(pessoa);
         }
 
-        // POST: PessoaController/Delete/5
+        // POST: Pessoa/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, Pessoa model)
+        [Route("Pessoa/Delete/{id}")]
+        public ActionResult Delete(int id, Pessoa pessoa)
         {
             try
             {
-                model.Id = id;
-                this.PessoaRepository.Delete(model);
+                PessoaRepository.Delete(id);
 
                 return RedirectToAction(nameof(Index));
             }

@@ -13,19 +13,19 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
+                <label asp-for="NomePessoa" class="control-label"></label>
+                <input asp-for="NomePessoa" class="form-control" />
+                <span asp-validation-for="NomePessoa" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Sobrenome" class="control-label"></label>
-                <input asp-for="Sobrenome" class="form-control" />
-                <span asp-validation-for="Sobrenome" class="text-danger"></span>
+                <label asp-for="SobrenomePessoa" class="control-label"></label>
+                <input asp-for="SobrenomePessoa" class="form-control" />
+                <span asp-validation-for="SobrenomePessoa" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DataNascimento" class="control-label"></label>
-                <input asp-for="DataNascimento" class="form-control" />
-                <span asp-validation-for="DataNascimento" class="text-danger"></span>
+                <label asp-for="DataDeAniversario" class="control-label">Data De Aniversário</label>
+                <input type="date" asp-for="DataDeAniversario" class="form-control" />
+                <span asp-validation-for="DataDeAniversario" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

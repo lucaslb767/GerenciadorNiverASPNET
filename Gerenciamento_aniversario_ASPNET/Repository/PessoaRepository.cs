@@ -1,11 +1,11 @@
-﻿using Gerenciamento_aniversario_ASPNET.Models;
+﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Gerenciamento_aniversario_ASPNET.Models;
 
 namespace Gerenciamento_aniversario_ASPNET.Repository
 {
@@ -15,71 +15,47 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
 
         public PessoaRepository(IConfiguration configuration)
         {
-            this.ConnectionString = configuration.GetConnectionString("Gerenciamento");
+            ConnectionString = configuration.GetConnectionString("Gerenciamento");
         }
-
         public void Save(Pessoa pessoa)
         {
-            using (SqlConnection connection = new SqlConnection(this.ConnectionString))
+            using (var connection = new SqlConnection(this.ConnectionString))
             {
-                string sql = "INSERT INTO PESSOA(NOME, SOBRENOME, DATANASCIMENTO) VALUES (@P1, @P2, @P3)";
+                var sql = @" INSERT INTO Pessoa(NOME, SOBRENOME, DATANASCIMENTO)
+                             VALUES (@P1, @P2, @P3)
+                ";
 
-                var command = connection.CreateCommand();
-                command.CommandText = sql;
-                command.Parameters.AddWithValue("P1", pessoa.Nome);
-                command.Parameters.AddWithValue("P2", pessoa.Sobrenome);
-                command.Parameters.AddWithValue("P3", pessoa.DataNascimento);
-                command.CommandType = System.Data.CommandType.Text;
-
-                connection.Open();
-                command.ExecuteNonQuery();
-                connection.Close();
+                connection.Execute(sql, new { P1 = pessoa.NomePessoa, P2 = pessoa.SobrenomePessoa, P3 = pessoa.DataDeAniversario });
             }
         }
 
         public void Update(Pessoa pessoa)
         {
-            using (SqlConnection connection = new SqlConnection(this.ConnectionString))
+            using (var connection = new SqlConnection(this.ConnectionString))
             {
-                string sql = @"
-                                UPDATE PESSOA
+
+                var sql = @" 
+                             UPDATE PESSOA
                                 SET NOME = @P1,
                                 SOBRENOME = @P2,
                                 DATANASCIMENTO = @P3
                                 WHERE ID = @P4;
                 ";
 
-                var command = connection.CreateCommand();
-                command.CommandText = sql;
-                command.Parameters.AddWithValue("P1", pessoa.Nome);
-                command.Parameters.AddWithValue("P2", pessoa.Sobrenome);
-                command.Parameters.AddWithValue("P3", pessoa.DataNascimento);
-                command.Parameters.AddWithValue("P4", pessoa.Id);
-                command.CommandType = System.Data.CommandType.Text;
-
-                connection.Open();
-                command.ExecuteNonQuery();
-                connection.Close();
+                connection.Execute(sql, new { P1 = pessoa.NomePessoa, P2 = pessoa.SobrenomePessoa, P3 = pessoa.DataDeAniversario, P4 = pessoa.Id });
             }
         }
 
-        public void Delete(Pessoa pessoa)
+        public void Delete(int id)
         {
-            using (SqlConnection connection = new SqlConnection(this.ConnectionString))
+            using (var connection = new SqlConnection(this.ConnectionString))
             {
-                string sql = @"
-                        DELETE FROM PESSOA
-                        WHERE ID = @P1
+
+                var sql = @" DELETE FROM PESSOA
+                             WHERE ID = @P1 
                 ";
 
-                var command = connection.CreateCommand();
-                command.CommandText = sql;
-                command.Parameters.AddWithValue("P1", pessoa.Id);
-                command.CommandType = System.Data.CommandType.Text;
-
-                connection.Open();
-                command.ExecuteNonQuery();
-                connection.Close();
+                connection.Execute(sql, new { P1 = id });
             }
         }
 
@@ -87,113 +63,90 @@ namespace Gerenciamento_aniversario_ASPNET.Repository
         {
             List<Pessoa> result = new List<Pessoa>();
 
-            using (SqlConnection connection = new SqlConnection(this.ConnectionString))
+            using (var connection = new SqlConnection(this.ConnectionString))
             {
-                string sql = @"
-                        SELECT ID, NOME, SOBRENOME, DATANASCIMENTO
-                        FROM PESSOA
-                ";
 
-                var command = connection.CreateCommand();
-                command.CommandText = sql;
-                command.CommandType = System.Data.CommandType.Text;
+                var sql = @" SELECT ID, NOME, SOBRENOME, DATANASCIMENTO FROM PESSOA";
 
-                connection.Open();
-
-                SqlDataReader dr = command.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    result.Add(new Pessoa()
-                    {
-                        Id = dr.GetInt32("ID"),
-                        Nome = dr.GetString("NOME"),
-                        Sobrenome = dr.GetString("SOBRENOME"),
-                        DataNascimento = dr.GetDateTime("DATANASCIMENTO")
-                    });
-                }
-
-                connection.Close();
+                result = connection.Query<Pessoa>(sql).ToList();
             }
 
             return result;
         }
 
-        public Pessoa GetPessoaById(int id)
+        public Pessoa GetById(int id)
         {
             Pessoa result = null;
 
-            using (SqlConnection connection = new SqlConnection(this.ConnectionString))
+            using (var connection = new SqlConnection(this.ConnectionString))
             {
-                string sql = @"
-                        SELECT ID, NOME, SOBRENOME, DATANASCIMENTO
-                        FROM PESSOA
-                        WHERE ID = @P1
+
+                var sql = @" SELECT ID, NOME, SOBRENOME, DATANASCIMENTO FROM Pessoa
+                             WHERE Id = @P1
                 ";
 
-                var command = connection.CreateCommand();
-                command.CommandText = sql;
-                command.Parameters.AddWithValue("P1", id);
-                command.CommandType = System.Data.CommandType.Text;
-
-                connection.Open();
-
-                SqlDataReader dr = command.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    result = new Pessoa()
-                    {
-                        Id = dr.GetInt32("ID"),
-                        Nome = dr.GetString("NOME"),
-                        Sobrenome = dr.GetString("SOBRENOME"),
-                        DataNascimento = dr.GetDateTime("DATANASCIMENTO")
-                    };
-                }
-
-                connection.Close();
+                result = connection.QueryFirstOrDefault<Pessoa>(sql, new { P1 = id });
             }
 
             return result;
         }
 
-        public List<Pessoa> Search(string query)
+        public List<Pessoa> GetByName(string nome)
         {
             List<Pessoa> result = new List<Pessoa>();
 
-            using (SqlConnection connection = new SqlConnection(this.ConnectionString))
+            using (var connection = new SqlConnection(this.ConnectionString))
             {
-                string sql = @"
-                        SELECT ID, NOME, SOBRENOME, DATANASCIMENTO
-                        FROM PESSOA
-                        WHERE (NOME LIKE '%' + @P1 +'%' OR SOBRENOME LIKE '%' + @P2 + '%')";
 
-                var command = connection.CreateCommand();
-                command.CommandText = sql;
-                command.Parameters.AddWithValue("P1", query);
-                command.Parameters.AddWithValue("P2", query);
-                command.CommandType = System.Data.CommandType.Text;
+                var sql = @" SELECT Id, NOME, SOBRENOME, DATANASCIMENTO FROM Pessoa
+                             WHERE NOME LIKE '%' + @P1 + '%' COLLATE SQL_Latin1_General_CP1_CI_AI OR SOBRENOME LIKE '%' + @P1 + '%' COLLATE SQL_Latin1_General_CP1_CI_AI
+                ";
 
-                connection.Open();
-
-                SqlDataReader dr = command.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    result.Add(new Pessoa()
-                    {
-                        Id = dr.GetInt32("ID"),
-                        Nome = dr.GetString("NOME"),
-                        Sobrenome = dr.GetString("SOBRENOME"),
-                        DataNascimento = dr.GetDateTime("DATANASCIMENTO")
-                    });
-                }
-
-                connection.Close();
+                result = connection.Query<Pessoa>(sql, new { P1 = nome.Trim() }).ToList();
             }
 
             return result;
         }
 
+        public List<Pessoa> GetTodayBirthday()
+        {
+            List<Pessoa> result = new List<Pessoa>();
+            DateTime date = DateTime.Today;
+
+            using (var connection = new SqlConnection(this.ConnectionString))
+            {
+
+                var sql = @" SELECT Id, NOME, SOBRENOME, DATANASCIMENTO FROM Pessoa
+                             WHERE MONTH(DATANASCIMENTO) = @P1 AND DAY(DATANASCIMENTO) = @P2
+                ";
+
+                if (connection.State != System.Data.ConnectionState.Open)
+                    connection.Open();
+
+                result = connection.Query<Pessoa>(sql, new { P1 = date.Month, P2 = date.Day }).ToList();
+            }
+
+            return result.OrderBy(pessoa => pessoa.DataDeAniversario).ToList();
+        }
+
+        public List<Pessoa> GetNextBirthday()
+        {
+            List<Pessoa> result = new List<Pessoa>();
+            DateTime date = DateTime.Today;
+
+            using (var connection = new SqlConnection(this.ConnectionString))
+            {
+
+                var sql = @"SELECT Id, NOME, SOBRENOME, DATANASCIMENTO 
+                            FROM Pessoa
+                            WHERE (MONTH(DATANASCIMENTO) <> @P1 OR MONTH(DATANASCIMENTO) = @P1) 
+                            AND (DAY(DATANASCIMENTO) <> @P2 OR DAY(DATANASCIMENTO) = @P2)
+                ";
+
+                result = connection.Query<Pessoa>(sql, new { P1 = date.Month, P2 = date.Day, P3 = date.Date }).ToList();
+            }
+
+            return result.OrderBy(pessoa => pessoa.DiferencaAniversario()).ToList();
+        }
     }
 }

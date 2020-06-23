@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Gerenciamento_aniversario_ASPNET.Models.Pessoa>
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h1>Search Result</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<p>
+    <a asp-action="Index">Index</a>
+</p>
+<form asp-action="Search">
+    <div class="form-group">
+        <input type="text" name="Nome" placeholder="Buscar pelo nome" class="form-control" style="width:30%;" required />
+        <input type="submit" value="Search" class="btn btn-primary" style="margin-top: 1%;" />
+    </div>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nome
+            </th>
+            <th>
+                Sobrenome
+            </th>
+            <th>
+                Data De Aniversário
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+
+            @foreach (var item in Model)
+            {
+                string data = item.DataDeAniversario.ToString("dd/MM/yyyy");
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NomePessoa)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SobrenomePessoa)
+                    </td>
+                    <td>
+                        @data
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
